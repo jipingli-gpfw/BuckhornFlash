@@ -9,6 +9,7 @@ Prerequisities:
 * Buckhorn v53 and above
 * USB type-C cable
 * Administrator privilige 
+* Buckhorn secure and insecure images
 
 How to use:
 * Left click on the BurningBuckhorn.bat file
