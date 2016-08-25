@@ -1,3 +1,6 @@
+REM Use default color
+color
+
 echo off
 echo "              ######################################            "
 echo "              Welcome to the Buckhorn Flash Program!            "
@@ -40,6 +43,7 @@ if not exist "C:/Program Files (x86)/Amlogic/USB_Burning_Tool/USB_Burning_Tool.e
 	 
 REM Check whether the Buckhorn is connected or not
 REM If not connected, ask to confirm the adb mode "arm-home-record-mode"
+echo.
 echo "NOTE!!!!!! Please connect the Buckhorn to tester through USB port, and 
 echo "power on the Buckhorn, then
 echo "click arm-home-record-mode to put the Buckhorn into debug mode
@@ -48,8 +52,9 @@ set /p command=Already pressed the buttons? YES/NO?
 if "%command%"=="YES" (
 echo "Buckhorn connected"
 goto Connected
-) 
-if "%command%"=="NO" goto Disconnected
+) else (
+goto Disconnected
+)
 
 
 
@@ -60,14 +65,15 @@ adb devices
 set /p command=Did you see " 12345678900  device"? YES/NO?    
 if "%command%"=="YES" (
 goto EnterADBShell
+) else (
+goto Disconnected
 )
-if "%command%"=="NO" goto Disconnected
 
 
 REM Add tips here before opening the tool
 :EnterADBShell
 echo Enter adb shell
-REM adb shell
+adb shell
 
 REM echo If %errorlevel%==0, last run is ok. else error.
 if "%errorlevel%"=="0" (
@@ -78,7 +84,7 @@ if "%errorlevel%"=="0" (
 
 :CheckSecureInfo
 echo Please check the secure or insecure info of androidboot.serialno. Keep in your memory!
-REM cat /proc/cmdline
+cat /proc/cmdline
 
 if "%errorlevel%"=="0" (
 	goto ShowUSBBurningToolTips 
@@ -89,6 +95,7 @@ if "%errorlevel%"=="0" (
 :ShowUSBBurningToolTips
 REM ----------------> going to use the usb burning too
 echo.
+echo !!!!Now, going to open the burning tool, before doing that, please read following instructions:
 echo Please load the correct image file.  If you see secure at the end of the line, then choose secure image.
 echo Secured ->  secure-aml_upgrade_package.img file. 
 echo Insecured -> aml_upgrade_package.img file. 
@@ -115,23 +122,27 @@ echo.
 echo Once you see burning complete, please click "Stop" and close the Usb_Burning_Tool, then unplug the USB cable. 
 echo.
 
-set /p command=Are you clear? YES/NO? 
+set /p command=Are you clear? YES/NO?   
 if "%command%"=="YES" (
 goto OpenUSBBurningTool
+) else (
+goto HandleError
 )
-if "%command%"=="NO" goto HandleError
 
 
 REM Open the USB burning tool, do the burning over there.
 :OpenUSBBurningTool
 "C:/Program Files (x86)/Amlogic/USB_Burning_Tool/USB_Burning_Tool.exe"
+REM echo %errorlevel%
 if "%errorlevel%"=="0" (
+	goto FinishThisBat 
+) 
+if "%errorlevel%"=="2" (
 	goto FinishThisBat 
 ) else (
 	goto HandleError
 )
 
-REM exit this batch
  
 :HandleError4adb
 echo.
@@ -141,11 +152,13 @@ echo Some websites that explain the use of the tool.
 echo http://lifehacker.com/the-easiest-way-to-install-androids-adb-and-fastboot-to-1586992378
 echo http://www.android.gs/install-android-sdk-adb-windows/
 echo.
+goto HandleError
 
 :Disconnected
 echo Buckhorn not ready!
 
 :HandleError
+color 4
 echo !!!!!!!!!!!!! ERROR !!!!!!!!!!!!!  
 
 :FinishThisBat
