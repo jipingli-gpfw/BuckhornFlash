@@ -62,29 +62,20 @@ REM Check whether the secure certificate file exist or not for "secure" Buckhorn
 :Connected
 adb devices
 
-set /p command=Did you see " 12345678900  device"? YES/NO?    
+set /p command=Did you see "12345678900  device"? YES/NO?    
 if "%command%"=="YES" (
-goto EnterADBShell
+goto EnterADBShellToCheckSecure
 ) else (
 goto Disconnected
 )
 
 
 REM Add tips here before opening the tool
-:EnterADBShell
+:EnterADBShellToCheckSecure
 echo Enter adb shell
-adb shell
-
-REM echo If %errorlevel%==0, last run is ok. else error.
-if "%errorlevel%"=="0" (
-	goto CheckSecureInfo 
-) else (
-	goto HandleError
-)
-
-:CheckSecureInfo
 echo Please check the secure or insecure info of androidboot.serialno. Keep in your memory!
-cat /proc/cmdline
+adb shell cat /proc/cmdline
+REM echo If %errorlevel%==0, last run is ok. else error.
 
 if "%errorlevel%"=="0" (
 	goto ShowUSBBurningToolTips 
@@ -109,8 +100,9 @@ echo -	Once image has been imported into the USB_Burning_Tool v2.04
 echo -	Unselect Erase Flash checkbox.  If this is still selected you will wipe out Buckhorn Manufacturing partition.
 echo -	Erase bootloader should be selected (Due to NAND partition size changes this is required)
 echo. 
+echo !!!!!!!!!!!!!!!!!!!!!!!!!Important: check below instructions carefully!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 echo Getting Buckhorn to be recognized by USB_Burning_Tool:
-echo -	With Buckhorn off.
+echo -	Turn Buckhorn off
 echo -	Connect Buckhorn to PC USB port with Type C USB cable
 echo -	First Long Press and hold the Landing button. 10+ seconds.
 echo You should see Connect Success on the screen of the USB_Burning_Tool
@@ -165,4 +157,5 @@ echo !!!!!!!!!!!!! ERROR !!!!!!!!!!!!!
 echo DONE!
 
 :End
-
+echo.
+set /p command=Press any key to exit... 
